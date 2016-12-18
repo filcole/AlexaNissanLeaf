@@ -65,6 +65,7 @@ ChargingIntent if it's charging up
 ChargingIntent if it's currently charging
 ChargingIntent currently charging
 ChargingIntent if it's on charge
+ChargingIntent if it's charged
 ChargingIntent charging up
 ConnectedIntent connected
 ConnectedIntent connected to power
