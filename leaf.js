@@ -72,8 +72,14 @@ function login(successCallback) {
 	"&Password=" + password,
 	loginResponse => {
 		// Get the session id and VIN for future API calls.
-		sessionid = encodeURIComponent(loginResponse.VehicleInfoList.vehicleInfo[0].custom_sessionid);
-		vin = encodeURIComponent(loginResponse.VehicleInfoList.vehicleInfo[0].vin);
+		// Sometimes the results from the API include a VehicleInfoList array, sometimes they omit it!
+		if (loginResponse.VehicleInfoList) {
+			sessionid = encodeURIComponent(loginResponse.VehicleInfoList.vehicleInfo[0].custom_sessionid);
+			vin = encodeURIComponent(loginResponse.VehicleInfoList.vehicleInfo[0].vin);
+		} else  {
+			sessionid = encodeURIComponent(loginResponse.vehicleInfo[0].custom_sessionid);
+			vin = encodeURIComponent(loginResponse.vehicleInfo[0].vin);			
+		}
 		successCallback();
 	}, 
 	loginFailureCallback);
@@ -109,6 +115,19 @@ exports.sendPreheatCommand = (successCallback, failureCallback) => {
 **/
 exports.sendCoolingCommand = (successCallback, failureCallback) => {
 	login(() => sendRequest("ACRemoteRequest.php",
+	"UserId=" + username +
+	"&custom_sessionid=" + sessionid +
+	"&RegionCode=" + region_code +
+	"&VIN=" + vin,
+	successCallback,
+	failureCallback));
+}
+
+/**
+* Disable the climate control in the car.
+**/
+exports.sendClimateControlOffCommand = (successCallback, failureCallback) => {
+	login(() => sendRequest("ACRemoteOffRequest.php",
 	"UserId=" + username +
 	"&custom_sessionid=" + sessionid +
 	"&RegionCode=" + region_code +
